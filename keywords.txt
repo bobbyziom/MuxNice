@@ -1,0 +1,4 @@
+Mux			KEYWORD1
+assign		KEYWORD2
+write		KEYWORD2
+read		KEYWORD2
