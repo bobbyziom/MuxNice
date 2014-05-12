@@ -1,6 +1,6 @@
 #include <MuxNice.h>
 
-int _muxChannel16[16][4] = {
+int _muxChannel16[CHANNELS16][MUX_16_PINS] = {
     {0,0,0,0}, //channel 0
     {1,0,0,0}, //channel 1
     {0,1,0,0}, //channel 2
@@ -19,7 +19,7 @@ int _muxChannel16[16][4] = {
     {1,1,1,1}  //channel 15
 };
 
-int _muxChannel8[8][3] = {
+int _muxChannel8[CHANNELS8][MUX_8_PINS] = {
     {0,0,0}, //channel 0
     {1,0,0}, //channel 1
     {0,1,0}, //channel 2
@@ -30,15 +30,36 @@ int _muxChannel8[8][3] = {
     {1,1,1}, //channel 7
 };
 
-MuxNice::MuxNice(int channels) {
+MuxNice::MuxNice(int channels, int dataPin) {
 
 	_channels = channels;
+	_demux = false;
+
+	_dataPin = dataPin;
+	if(_demux) {
+		pinMode(_dataPin, OUTPUT);
+	}
 
 }
 
 void MuxNice::assignCtrlPins(int pin1, int pin2, int pin3) {
 
 	assignCtrlPins(pin1, pin2, pin3, 0);
+
+}
+
+void MuxNice::demuxMe() {
+
+	_demux = true;
+	pinMode(_dataPin, OUTPUT);
+
+}
+
+void MuxNice::goDigital() {
+
+	if(!_demux) {
+		pinMode(_dataPin, INPUT);
+	}
 
 }
 
@@ -49,7 +70,7 @@ void MuxNice::assignCtrlPins(int pin1, int pin2, int pin3, int pin4) {
 	_controlPin[2] = pin3;
 	_controlPin[3] = pin4;
 
-	for(int i = 0; i < 4; i++) {
+	for(int i = 0; i < MUX_16_PINS; i++) {
 
 		pinMode(_controlPin[i], OUTPUT); 
 
@@ -57,18 +78,31 @@ void MuxNice::assignCtrlPins(int pin1, int pin2, int pin3, int pin4) {
 
 }
 
-void MuxNice::assignDataPin(int dataPin) {
+void MuxNice::open(int channel) {
 
-	_dataPin = dataPin;
-	pinMode(_dataPin, OUTPUT);
+	if(_channels == CHANNELS8) {
+
+		for(int i = 0; i < MUX_8_PINS; i ++){
+	    	digitalWrite(_controlPin[i], _muxChannel8[channel][i]);
+	  	}
+
+ 	}
+
+ 	if(_channels == CHANNELS16) {
+
+ 		for(int i = 0; i < MUX_16_PINS; i ++){
+	    	digitalWrite(_controlPin[i], _muxChannel16[channel][i]);
+	  	}
+
+ 	}
 
 }
 
 void MuxNice::write(int channel, int toWrite) {
 
-	if(_channels == 8) {
+	if(_channels == CHANNELS8) {
 
-	    for(int i = 0; i < 3; i ++){
+	    for(int i = 0; i < MUX_8_PINS; i ++){
 	      	digitalWrite(_controlPin[i], _muxChannel8[channel][i]);
 	    }
 	  
@@ -76,9 +110,9 @@ void MuxNice::write(int channel, int toWrite) {
 		    
 	}
 
-	if(_channels == 16) {
+	if(_channels == CHANNELS16) {
 
-	    for(int i = 0; i < 4; i ++){
+	    for(int i = 0; i < MUX_16_PINS; i ++){
 	      	digitalWrite(_controlPin[i], _muxChannel16[channel][i]);
 	    }
 	  
@@ -90,9 +124,9 @@ void MuxNice::write(int channel, int toWrite) {
 
 int MuxNice::read(int channel) {
 
-	if(_channels == 8) {
+	if(_channels == CHANNELS8) {
 
-		for(int i = 0; i < 3; i ++){
+		for(int i = 0; i < MUX_8_PINS; i ++){
 	    	digitalWrite(_controlPin[i], _muxChannel8[channel][i]);
 	  	}
 
@@ -101,9 +135,9 @@ int MuxNice::read(int channel) {
 	  	return value;
  	}
 
- 	if(_channels == 16) {
+ 	if(_channels == CHANNELS16) {
 
- 		for(int i = 0; i < 4; i ++){
+ 		for(int i = 0; i < MUX_16_PINS; i ++){
 	    	digitalWrite(_controlPin[i], _muxChannel16[channel][i]);
 	  	}
 
@@ -117,11 +151,11 @@ int MuxNice::read(int channel) {
 
 void MuxNice::runTest() {
 
-	if(_channels == 8) {
+	if(_channels == CHANNELS8) {
 
 		for(int channel = 0; channel < 8; channel++) {
 		  
-		    for(int i = 0; i < 3; i ++){
+		    for(int i = 0; i < MUX_8_PINS; i ++){
 		      	digitalWrite(_controlPin[i], _muxChannel8[channel][i]);
 		    }
 		  	
@@ -133,11 +167,11 @@ void MuxNice::runTest() {
 
 	}
 
-	if(_channels == 16) {
+	if(_channels == CHANNELS16) {
 
 		for(int channel = 0; channel < 16; channel++) {
 		  
-		    for(int i = 0; i < 4; i ++){
+		    for(int i = 0; i < MUX_16_PINS; i ++){
 		      	digitalWrite(_controlPin[i], _muxChannel16[channel][i]);
 		    }
 		  

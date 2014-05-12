@@ -1,4 +1,7 @@
 Mux			KEYWORD1
+open		KEYWORD2
+demuxMe		KEYWORD2
+goDigital	KEYWORD2
 assign		KEYWORD2
 write		KEYWORD2
 read		KEYWORD2
