@@ -3,10 +3,10 @@
 
 #include <Arduino.h> 
 
-#include MUX_16_PINS 4 
-#include MUX_8_PINS 4
-#include CHANNELS16 16 
-#include CHANNELS8 8
+#define MUX_16_PINS 4 
+#define MUX_8_PINS 4
+#define CHANNELS16 16 
+#define CHANNELS8 8
 
 class MuxNice {
 
